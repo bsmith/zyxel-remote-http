@@ -7,7 +7,6 @@ from random import random
 from time import sleep
 from bs4 import BeautifulSoup
 
-
 def main(args):
     s = requests.Session()
     # unfortunately, the ssl ciphers used by zyxel are very old and deprecated, thus plaintext HTTP
@@ -38,51 +37,51 @@ def main(args):
     else:
         raise Exception("Failed to fetch the state of PoE port %s."
                         "Got response: %s" % (args.port, ret.text))
-    if args.state is None:
-        table = soup.select("table")[2]
-        data = []
-        # https://stackoverflow.com/a/23377804
-        for row in table.find_all('tr'):
-            cols = row.find_all('td')
-            cols = [ele.text.strip() for ele in cols]
-            data.append([ele for ele in cols if ele])
+    # if args.state is None:
+    #     table = soup.select("table")[2]
+    #     data = []
+    #     # https://stackoverflow.com/a/23377804
+    #     for row in table.find_all('tr'):
+    #         cols = row.find_all('td')
+    #         cols = [ele.text.strip() for ele in cols]
+    #         data.append([ele for ele in cols if ele])
 
-        ret = []
-        for entry in data[3:]:
-            if entry:
-                entr = {}
-                for i, item in enumerate(entry[:-1]):
-                    entr[data[0][i]] = item
-                ret.append(entr)
-        if args.port:
-            if args.verbose:
-                output = ret[args.port - 1]
-            else:
-                output = ret[args.port - 1].get("State")
-        else:
-            output = ret
-        print(output)
-    else:
-        xssid_content = soup.find('input', {'name': 'XSSID'}).get('value')
-        print("Executing command: Turn %s PoE Port %s." %
-              ('on' if args.state else 'off', args.port))
-        command_data = {
-            "XSSID": xssid_content,
-            "portlist": args.port,
-            "state": args.state,
-            "portPriority": 2,
-            "portPowerMode": 3,
-            "portRangeDetection": 0,
-            "portLimitMode": 0,
-            "poeTimeRange": 20,
-            "cmd": 775,
-            "sysSubmit": "Apply"
-        }
-        ret = s.post(url, data=command_data)
-        if 'window.location.replace' in ret.text:
-            print("Command executed successfully!")
-        else:
-            raise Exception("Failed to execute command: %s" % ret.text)
+    #     ret = []
+    #     for entry in data[3:]:
+    #         if entry:
+    #             entr = {}
+    #             for i, item in enumerate(entry[:-1]):
+    #                 entr[data[0][i]] = item
+    #             ret.append(entr)
+    #     if args.port:
+    #         if args.verbose:
+    #             output = ret[args.port - 1]
+    #         else:
+    #             output = ret[args.port - 1].get("State")
+    #     else:
+    #         output = ret
+    #     print(output)
+    # else:
+    #     xssid_content = soup.find('input', {'name': 'XSSID'}).get('value')
+    #     print("Executing command: Turn %s PoE Port %s." %
+    #           ('on' if args.state else 'off', args.port))
+    #     command_data = {
+    #         "XSSID": xssid_content,
+    #         "portlist": args.port,
+    #         "state": args.state,
+    #         "portPriority": 2,
+    #         "portPowerMode": 3,
+    #         "portRangeDetection": 0,
+    #         "portLimitMode": 0,
+    #         "poeTimeRange": 20,
+    #         "cmd": 775,
+    #         "sysSubmit": "Apply"
+    #     }
+    #     ret = s.post(url, data=command_data)
+    #     if 'window.location.replace' in ret.text:
+    #         print("Command executed successfully!")
+    #     else:
+    #         raise Exception("Failed to execute command: %s" % ret.text)
 
 
 def encode(_input):
