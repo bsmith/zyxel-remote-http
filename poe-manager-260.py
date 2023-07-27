@@ -7,12 +7,12 @@ from random import random
 from time import sleep, time
 from bs4 import BeautifulSoup
 
+from lib.login_v260 import encode
+from lib.common import make_session, zyxelUrl
 
 def main(args):
-    s = requests.Session()
-    # unfortunately, the ssl ciphers used by zyxel are very old and deprecated, thus plaintext HTTP
-    url = "http://{}/cgi-bin/dispatcher.cgi".format(args.host)
-    s.verify = False
+    s = make_session()
+    url = zyxelUrl(args.host)
 
     login_data = {
         "login": 1,
@@ -30,18 +30,23 @@ def main(args):
     # implicitly wait for login to occur
     sleep(1)
     ret2 = s.get(url, params=login_check_data)
+    # 'OK' if logged in
+    # 'AUTHING' if not logged in
     if 'OK' not in ret2.text:
         raise Exception("Login failed: %s" % ret2.text)
 
     print("Login successful, parsing cookie.")
-    cookie = parse_cookie(s.get(url, params={"cmd": 1}))
+    cookie = parse_cookie(s.get(url, params={"cmd": 2}))
     print("Got COOKIE: %s" % cookie)
     s.cookies.set("XSSID", cookie)
+
+    print(s.cookies)
+    print(s.cookies.get("HTTP_XSSID"))
 
     ret = s.get(url, params={"cmd": 799})
     if ret.ok:
         soup = BeautifulSoup(ret.content, 'html.parser')
-        print("Got soup %s" % soup)
+        # print("Got soup %s" % soup)
     else:
         raise Exception("Failed to fetch the state of PoE port %s."
                         "Got response: %s" % (args.port, ret.text))
@@ -96,31 +101,8 @@ def current_time():
     return int(time() * 1000.0)
 
 
-def encode(_input):
-    # The python representation of the JS function with the same name.
-    # This could be improved further, but I can't be bothered.
-    password = ""
-    possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-    _len = lenn = len(_input)
-    i = 1
-    while i <= (320 - _len):
-        if 0 == i % 7 and _len > 0:
-            _len -= 1
-            password += _input[_len]
-        elif i == 123:
-            if lenn < 10:
-                password += "0"
-            else:
-                password += str(math.floor(lenn / 10))
-        elif i == 289:
-            password += str(lenn % 10)
-        else:
-            password += possible[math.floor(random() * len(possible))]
-        i += 1
-    return password
-
-
-def parse_cookie(cmd_1):
+def parse_cookie(cmd_1: requests.Response):
+    print(cmd_1.text)
     for line in cmd_1.text.split("\n"):
         if 'XSSID' in line:
             return line.replace('setCookie("XSSID", "', '').replace('");', '').strip()
