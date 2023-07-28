@@ -3,8 +3,8 @@
 import argparse
 from bs4 import BeautifulSoup
 
-from lib.common import make_session, zyxelUrl
-from lib import performLogin
+from zyxel_remote_http.common import make_session, zyxelUrl
+from zyxel_remote_http import performLogin
 
 def main(args):
     s = make_session()

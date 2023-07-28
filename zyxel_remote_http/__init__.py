@@ -1,6 +1,6 @@
 
-from lib.login_v260 import performLogin as performLogin_v260
-from lib.login_v270 import performLogin as performLogin_v270
+from zyxel_remote_http.login_v260 import performLogin as performLogin_v260
+from zyxel_remote_http.login_v270 import performLogin as performLogin_v270
 
 def performLogin(session, url, username, password, version):
     if version == "260":

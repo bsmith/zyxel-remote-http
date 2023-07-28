@@ -7,8 +7,8 @@ from random import random
 from time import sleep, time
 from bs4 import BeautifulSoup
 
-from lib.login_v260 import encode
-from lib.common import make_session, zyxelUrl
+from zyxel_remote_http.login_v260 import encode
+from zyxel_remote_http.common import make_session, zyxelUrl
 
 def main(args):
     s = make_session()
