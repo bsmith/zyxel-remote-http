@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 
 import argparse
-import re
-import sys
 
 from urllib.parse import urljoin
 
@@ -12,6 +10,8 @@ import zyxel_remote_http
 def main(args):
     # Connect to the zyxel and log in
     zyxel = Zyxel(host=args.host, fwversion=args.fwversion)
+    if args.verbose:
+        zyxel.set_verbose()
     zyxel.login(args.user, args.pwd)
 
     # Request the given cmd
@@ -34,21 +34,10 @@ def main(args):
     # submit the form
     if args.submit_form:
         (url, data) = response.get_form().get_form_url_and_data()
-        url = urljoin(zyxel.url_base, url)
-        if args.verbose:
-            print('POST', url)
-            print(data)
-        response = zyxel.session.post(url, data)
-        print(response)
-        redirect_match = re.search(r'window\.location\.replace\("([^"]+)"\)', response.text)
-        if redirect_match:
-            print(redirect_match.group(1))
-            url = urljoin(zyxel.url_base, redirect_match.group(1))
-            response = zyxel.session.get(url)
-            print(response)
-            response_form = zyxel_remote_http.Response(response).get_form()
-            print(response_form.get_field('result'))
-        
+        response = zyxel.post(url, data)
+        response = zyxel.follow_redirect_if_present(response)
+        response_form = response.get_form()
+        print(response_form.get_field('result'))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

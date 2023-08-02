@@ -1,3 +1,4 @@
+import re
 from bs4 import BeautifulSoup
 import bs4
 import requests
@@ -23,3 +24,8 @@ class Response():
             self.form = Form(self.get_soup().form)
         return self.form
     
+    def search_for_location_replace(self):
+        redirect_match = re.search(r'window\.location\.replace\("([^"]+)"\)', self.http_response.text)
+        if redirect_match:
+            return redirect_match.group(1)
+        return None
