@@ -1,3 +1,4 @@
+import sys
 from urllib.parse import urljoin
 from .response import Response
 from .common import make_session, zyxelUrl
@@ -26,7 +27,10 @@ class Zyxel():
     def request(self, method, url, data=None):
         url = urljoin(self.url_base, url)
         if self.verbose:
-            print('-> %s %s %s' % (method, url, data))
+            redacted_data = dict(data if data else {})
+            if 'password' in redacted_data:
+                redacted_data['password'] = 'REDACTED'
+            print('-> %s %s %s' % (method, url, redacted_data), file=sys.stderr)
         response = None
         if method == 'GET':
             response = self.session.get(url, params=data)
@@ -35,7 +39,7 @@ class Zyxel():
         else:
             raise Exception("Can't do method %s" % method)
         if self.verbose:
-            print('<- status %s' % response.status_code)
+            print('<- status %s' % response.status_code, file=sys.stderr)
         if response.ok:
             return self._set_last_response(Response(response))
         else:
@@ -53,7 +57,7 @@ class Zyxel():
             response = self.last_response
         redirect_url = response.search_for_location_replace()
         if self.verbose:
-            print('-- follow_redirect_if_present:', redirect_url)
+            print('-- follow_redirect_if_present:', redirect_url, file=sys.stderr)
         if redirect_url:
             return self.get(redirect_url)
         return response

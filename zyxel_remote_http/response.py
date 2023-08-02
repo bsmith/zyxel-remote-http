@@ -21,7 +21,10 @@ class Response():
 
     def get_form(self):
         if self.form == None:
-            self.form = Form(self.get_soup().form)
+            try:
+                self.form = Form(self.get_soup().form)
+            except:
+                self.form = None
         return self.form
     
     def search_for_location_replace(self):

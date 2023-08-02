@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import sys
 
 from urllib.parse import urljoin
 
@@ -14,20 +15,25 @@ def main(args):
         zyxel.set_verbose()
     zyxel.login(args.user, args.pwd)
 
+    if args.subcommand == 'cmd':
+        do_cmd(zyxel, args)
+    elif args.subcommand == 'ping':
+        do_ping(zyxel, args)
+
+def do_cmd(zyxel, args):
     # Request the given cmd
     response = zyxel.cmd(args.cmd)
     if args.verbose:
-        print(response)
+        print(response, file=sys.stderr)
     
     # show the form
     if args.show_form:
-        print("show form")
         response.get_form().print_form()
 
     # handle form_fields
     for field in args.form_fields:
         if args.verbose:
-            print("form-field:", field.split('='))
+            print("form-field:", field.split('='), file=sys.stderr)
         [field_name, field_value] = field.split('=')
         response.get_form().set_field(field_name, field_value)
 
@@ -38,6 +44,34 @@ def main(args):
         response = zyxel.follow_redirect_if_present(response)
         response_form = response.get_form()
         print(response_form.get_field('result'))
+
+def do_ping(zyxel, args):
+    cmd = 530
+    # Request the given cmd
+    response = zyxel.cmd(cmd)
+    if args.verbose:
+        print(response, file=sys.stderr)
+
+    # handle form_fields
+    form = response.get_form()
+    if args.ping_ip != None:
+        form.set_field('ip', args.ping_ip)
+    if args.ping_count != None:
+        form.set_field('count', args.ping_count)
+    if args.ping_interval != None:
+        form.set_field('interval', args.ping_interval)
+    if args.ping_size != None:
+        form.set_field('size', args.ping_size)
+
+    # submit the form
+    (url, data) = form.get_form_url_and_data()
+    response = zyxel.post(url, data)
+    response = zyxel.follow_redirect_if_present(response)
+    response_form = response.get_form()
+    if response_form:
+        print(response_form.get_field('result'))
+    else:
+        print(response.http_response.text)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -50,14 +84,28 @@ if __name__ == "__main__":
                         required=True, help='Password of the admin user.')
     parser.add_argument('--fwversion', '-F', dest='fwversion',
                         required=True, help='Firmware version (260 or 270).')
-    parser.add_argument('--cmd', '-c', dest='cmd',
-                        required=True, help='cmd')
-    parser.add_argument('--show-form', dest='show_form', action="store_true",
-                        help='Extract and show any form on the returned page.')
-    parser.add_argument('--form-field', dest='form_fields', action="append",
-                        help='Fill in a form field, key=value.')
-    parser.add_argument('--submit-form', dest='submit_form', action="store_true",
-                        help='Submit the form on the returned page.')
     parser.add_argument('--verbose', '-V', dest='verbose', action="store_true",
-                        help='Return detailed information when querying the specified port state.')
+                        help='Trace requests make to the device on stderr.')
+    
+    subparsers = parser.add_subparsers(required=True)
+
+    parser_cmd = subparsers.add_parser('cmd')
+    parser_cmd.set_defaults(subcommand='cmd')
+    parser_cmd.add_argument('--cmd', '-c', dest='cmd',
+                        required=True, help='cmd')
+    parser_cmd.add_argument('--show-form', dest='show_form', action="store_true",
+                        help='Extract and show any form on the returned page.')
+    parser_cmd.add_argument('--form-field', dest='form_fields', action="append",
+                        help='Fill in a form field, key=value.')
+    parser_cmd.add_argument('--submit-form', dest='submit_form', action="store_true",
+                        help='Submit the form on the returned page.')
+    
+    parser_ping = subparsers.add_parser('ping')
+    parser_ping.set_defaults(subcommand='ping')
+    parser_ping.add_argument('--ip', dest='ping_ip', required=True,
+                             help='IP address to ping')
+    parser_ping.add_argument('--count', dest='ping_count')
+    parser_ping.add_argument('--interval', dest='ping_interval')
+    parser_ping.add_argument('--size', dest='ping_size')
+    
     main(parser.parse_args())

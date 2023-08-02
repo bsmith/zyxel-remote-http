@@ -15,7 +15,7 @@ def performLogin(zyxel, url, username, password):
         "dummy": current_time()
     }
 
-    print("Logging in...")
+    # print("Logging in...")
     zyxel.get(url, params=login_data)
     # implicitly wait for login to occur
     sleep(1)
@@ -25,13 +25,13 @@ def performLogin(zyxel, url, username, password):
     if 'OK' not in ret2.http_response.text:
         raise Exception("Login failed: %s" % ret2.text)
 
-    print("Login successful, parsing cookie.")
+    # print("Login successful, parsing cookie.")
     cookie = parse_cookie(zyxel.get(url, params={"cmd": 2}).http_response)
-    print("Got COOKIE: %s" % cookie)
+    # print("Got COOKIE: %s" % cookie)
     zyxel.session.cookies.set("XSSID", cookie)
 
-    print(zyxel.session.cookies)
-    print(zyxel.session.cookies.get("HTTP_XSSID"))
+    # print(zyxel.session.cookies)
+    # print(zyxel.session.cookies.get("HTTP_XSSID"))
 
 def encode(_input):
     # The python representation of the JS function with the same name.
