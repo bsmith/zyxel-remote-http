@@ -21,7 +21,7 @@ class Zyxel():
         return last_response
 
     def login(self, user, password):
-        performLogin(self.session, self.url_base, user, password, self.fwversion)
+        performLogin(self, self.url_base, user, password, self.fwversion)
 
     def request(self, method, url, data=None):
         url = urljoin(self.url_base, url)

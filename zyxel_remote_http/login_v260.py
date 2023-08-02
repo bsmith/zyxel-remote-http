@@ -3,7 +3,7 @@ import requests
 from random import random
 from time import sleep, time
 
-def performLogin(session, url, username, password):
+def performLogin(zyxel, url, username, password):
     login_data = {
         "login": 1,
         "username": username,
@@ -16,22 +16,22 @@ def performLogin(session, url, username, password):
     }
 
     print("Logging in...")
-    session.get(url, params=login_data)
+    zyxel.get(url, params=login_data)
     # implicitly wait for login to occur
     sleep(1)
-    ret2 = session.get(url, params=login_check_data)
+    ret2 = zyxel.get(url, params=login_check_data)
     # 'OK' if logged in
     # 'AUTHING' if not logged in
-    if 'OK' not in ret2.text:
+    if 'OK' not in ret2.http_response.text:
         raise Exception("Login failed: %s" % ret2.text)
 
     print("Login successful, parsing cookie.")
-    cookie = parse_cookie(session.get(url, params={"cmd": 2}))
+    cookie = parse_cookie(zyxel.get(url, params={"cmd": 2}).http_response)
     print("Got COOKIE: %s" % cookie)
-    session.cookies.set("XSSID", cookie)
+    zyxel.session.cookies.set("XSSID", cookie)
 
-    print(session.cookies)
-    print(session.cookies.get("HTTP_XSSID"))
+    print(zyxel.session.cookies)
+    print(zyxel.session.cookies.get("HTTP_XSSID"))
 
 def encode(_input):
     # The python representation of the JS function with the same name.
