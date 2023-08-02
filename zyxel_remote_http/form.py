@@ -25,7 +25,7 @@ class Form():
             }
             if input_type == 'textarea':
                 data['value'] = ''.join(tag.strings)
-            if id in tag.attrs:
+            if 'id' in tag.attrs:
                 label_tag = self.html_form.find('label', attrs={'for': tag.attrs['id']})
                 if label_tag:
                     data['label'] = ' '.join(label_tag.stripped_strings)
