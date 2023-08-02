@@ -1,3 +1,4 @@
 
 from .zyxel import Zyxel
-from .login import performLogin
+from .response import Response
+from .form import Form

@@ -60,7 +60,6 @@ def current_time():
     return int(time() * 1000.0)
 
 def parse_cookie(cmd_1: requests.Response):
-    print(cmd_1.text)
     for line in cmd_1.text.split("\n"):
         if 'XSSID' in line:
             return line.replace('setCookie("XSSID", "', '').replace('");', '').strip()

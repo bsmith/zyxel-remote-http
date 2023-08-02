@@ -1,3 +1,4 @@
+from .response import Response
 from .common import make_session, zyxelUrl
 from .login import performLogin
 
@@ -14,8 +15,8 @@ class Zyxel():
     def cmd(self, cmd):
         ret = self.session.get(self.url_base, params={"cmd": cmd})
         if ret.ok:
-            print(ret)
-            print(ret.text)
+            # print(ret.text)
+            return Response(ret)
         else:
-            raise Exception("Failed call cmd %s."
+            raise Exception("Failed to call cmd %s."
                             "Got response: %s" % (cmd, ret.text))
