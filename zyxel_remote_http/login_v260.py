@@ -30,9 +30,6 @@ def performLogin(zyxel, url, username, password):
     # print("Got COOKIE: %s" % cookie)
     zyxel.session.cookies.set("XSSID", cookie)
 
-    # print(zyxel.session.cookies)
-    # print(zyxel.session.cookies.get("HTTP_XSSID"))
-
 def encode(_input):
     # The python representation of the JS function with the same name.
     # This could be improved further, but I can't be bothered.
