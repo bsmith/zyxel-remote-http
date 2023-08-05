@@ -1,10 +1,18 @@
-# zyxel-poe-manager
-A convenience script to manage the state of the PoE ports of a Zyxel GS1900 series switch.
+# zyxel-tool
+
+A convenience script to manage a Zyxel GS1900 series switch.
 
 ## Motivation
 
-This was written because my Zyxel GS1900-10HP switch managed to get me angry enough with the abhorrent web interface and inability to do anything useful via SNMP or the CLI.
-The only thing it does is log into the web management and do the same you would do by clicking approx. 10 times.
+Jon Bulica wrote a first version of this program to manage the PoE ports of his switch:
+
+> This was written because my Zyxel GS1900-10HP switch managed to get me angry enough with the abhorrent web interface and inability to do anything useful via SNMP or the CLI.
+> The only thing it does is log into the web management and do the same you would do by clicking approx. 10 times.
+
+Benjamin Smith extended this to manage other features:
+
+> I don't have the PoE version of the switch, but I'm trying to use VLANs on my home network and got very frustrated with setting up ports with the correct and untagged VLANs by clicking and clicking and clicking in the web interface.
+> I wanted to use the backup/restore config functionality from the command line so I could edit the configuration locally and upload a complete version to the switch.
 
 
 ## Dependencies
@@ -15,16 +23,32 @@ The only requirements are `requests` and `BeautifulSoup4` (for HTML parsing). Yo
 ```bash
 python3 -m pip install -r requirements.txt
 ```
-This script is compatible with the latest firmware version `V2.70(AAZI.1)_20220111` of my `GS1900-10HP` model rev `A1`.
-There are absolutely no guarantees that it will work with your system.
 
-**There is a separate release of this script for each firmware!**
+zyxel-tool has been tested with `V2.60(AAZI.2)_20200922` and should support `V2.70(AAZI.1)_20220111` but this has not been tested.  It has been tested with the `GS1900-24E`.
+
+~~This script is compatible with the latest firmware version `V2.70(AAZI.1)_20220111` of my `GS1900-10HP` model rev `A1`.
+There are absolutely no guarantees that it will work with your system.~~
+
+~~**There is a separate release of this script for each firmware!**
 For the previous versions `V2.40(AAZI.1)_20180705` and `V2.60(AAZI.2)_20200922` please use the older release 
-accordingly.
+accordingly.~~
 
 
 ## Usage
+
+Please see the automatically generated help from argparse:
+
 ```
+zyxel-tool.py --help
+```
+
+For help with each subcommand:
+
+```
+zyxel-tool.py <subcommand> --help
+```
+
+<!-- ```
 usage: poe-manager.py [-h] --host HOST --user USER --password PWD --port PORT
                       [--state {0,1}] [--verbose]
 
@@ -43,10 +67,13 @@ optional arguments:
                         rather than set it, omit this parameter.
   --verbose, -V         Return detailed information when querying the
                         specified port state.
-```
+```-->
 
 ## Examples
 
+Please see the [COOKBOOK](COOKBOOK.md).
+
+<!--
 ### Turn on PoE port 3
 
 ```bash
@@ -77,18 +104,19 @@ python3 poe-manager.py --host '10.10.10.2' --user admin --password hunter2 --por
 ```bash
 python3 poe-manager.py --host '10.10.10.2' --user admin --password hunter2 --port 0 --verbose
 ```
+-->
 
 ### Bash convenience function
 
 This is how I primarily use this script. Insert the following in your `.bashrc`:
 ```bash
-function poemanager() { /path/to/poe-manager.py -H '10.10.10.2' -U admin -P hunter2 -p $1 -s $2; }
+function zyxel-tool() { /path/to/zyxel-tool.py -H '10.10.10.2' -U admin -P hunter2 "$@"; }
 ```
-This would make the above examples look like the following:
+<!-- This would make the above examples look like the following:
 ```bash
 poemanager 3 1   # turn on port 3
 poemanager 3 0   # turn off port 3
-```
+``` -->
 
 Yes, you are saving the password in your `.bashrc`, but if someone can read arbitrary files in your system you're in much more trouble.
 
@@ -97,7 +125,8 @@ Yes, you are saving the password in your `.bashrc`, but if someone can read arbi
 
 If you manage to extend the feature set of this script, I'd really appreciate a PR.
 
+*TODO...*
 
 ## Licensing
 
-This program is licensed under the GPL 2.0 license. For more information, please refer to `LICENSE`.
+This program is licensed under the GPL 2.0 license. For more information, please refer to [LICENSE](LICENSE).
