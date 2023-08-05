@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 
 import argparse
-import sys
-
-from urllib.parse import urljoin
 
 from zyxel_remote_http import Zyxel
 import zyxel_remote_http
+from zyxel_remote_http.commands.cmd import Cmd
+from zyxel_remote_http.commands.ping import Ping
 
 def main(args):
     # Connect to the zyxel and log in
@@ -15,81 +14,10 @@ def main(args):
         zyxel.set_verbose()
     zyxel.login(args.user, args.pwd)
 
-    if args.subcommand == 'cmd':
-        do_cmd(zyxel, args)
-    elif args.subcommand == 'ping':
-        do_ping(zyxel, args)
-
-def do_cmd(zyxel, args):
-    # Request the given cmd
-    response = zyxel.cmd(args.cmd)
-
-    # dump the html
-    if args.dump_html:
-        print(response.http_response.text)
-
-    # extract a table
-    if args.extract_table:
-        dataset = response.extract_table()
-        for row in dataset:
-            print(row)
-    
-    # show the form
-    if args.show_form:
-        response.get_form().print_form()
-
-    # handle form_fields
-    if args.form_fields:
-        for field in args.form_fields:
-            if args.verbose:
-                print("form-field:", field.split('='), file=sys.stderr)
-            [field_name, field_value] = field.split('=')
-            response.get_form().set_field(field_name, field_value)
-
-    # submit the form
-    if args.submit_form:
-        (url, data) = response.get_form().get_form_url_and_data()
-        response = zyxel.post(url, data)
-        response = zyxel.follow_redirect_if_present(response)
-        if args.dump_html:
-            print("response html")
-            print(response.http_response.text)
-        response_form = response.get_form()
-        if response_form and args.show_form:
-            print("response form")
-            response_form.print_form()
-        if args.save_response:
-            with open(args.save_response, "w") as file:
-                print(response.http_response.text, file=file)
-            print("wrote %s" % args.save_response)
-
-def do_ping(zyxel, args):
-    cmd = 530
-    # Request the given cmd
-    response = zyxel.cmd(cmd)
-    if args.verbose:
-        print(response, file=sys.stderr)
-
-    # handle form_fields
-    form = response.get_form()
-    if args.ping_ip != None:
-        form.set_field('ip', args.ping_ip)
-    if args.ping_count != None:
-        form.set_field('count', args.ping_count)
-    if args.ping_interval != None:
-        form.set_field('interval', args.ping_interval)
-    if args.ping_size != None:
-        form.set_field('size', args.ping_size)
-
-    # submit the form
-    (url, data) = form.get_form_url_and_data()
-    response = zyxel.post(url, data)
-    response = zyxel.follow_redirect_if_present(response)
-    response_form = response.get_form()
-    if response_form:
-        print(response_form.get_field('result'))
+    if hasattr(args.subcommand, 'do_command'):
+        args.subcommand.do_command(zyxel, args)
     else:
-        print(response.http_response.text)
+        raise Exception('cannot execute command')
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -107,29 +35,14 @@ if __name__ == "__main__":
     
     subparsers = parser.add_subparsers(required=True)
 
-    parser_cmd = subparsers.add_parser('cmd')
-    parser_cmd.set_defaults(subcommand='cmd')
-    parser_cmd.add_argument('--cmd', '-c', dest='cmd',
-                        required=True, help='cmd')
-    parser_cmd.add_argument('--dump-html', dest='dump_html', action='store_true',
-                            help='Dump the HTML of the page.')
-    parser_cmd.add_argument('--extract-table', '--extract-tables', dest='extract_table', action='store_true',
-                            help='Extract a table of information.')
-    parser_cmd.add_argument('--show-form', dest='show_form', action="store_true",
-                        help='Extract and show any form on the returned page.')
-    parser_cmd.add_argument('--form-field', dest='form_fields', action="append",
-                        help='Fill in a form field, key=value.')
-    parser_cmd.add_argument('--submit-form', dest='submit_form', action="store_true",
-                        help='Submit the form on the returned page.')
-    parser_cmd.add_argument('--save-response', dest='save_response',
-                            help='File to save the final response to.')
-    
-    parser_ping = subparsers.add_parser('ping')
-    parser_ping.set_defaults(subcommand='ping')
-    parser_ping.add_argument('--ip', dest='ping_ip', required=True,
-                             help='IP address to ping')
-    parser_ping.add_argument('--count', dest='ping_count')
-    parser_ping.add_argument('--interval', dest='ping_interval')
-    parser_ping.add_argument('--size', dest='ping_size')
+    commands = {
+        'cmd': Cmd(),
+        'ping': Ping(),
+    }
+
+    for name, command in commands.items():
+        subparser = subparsers.add_parser(name)
+        subparser.set_defaults(subcommand=command)
+        command.add_options(subparser)
     
     main(parser.parse_args())

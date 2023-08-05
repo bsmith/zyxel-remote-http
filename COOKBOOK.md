@@ -9,6 +9,8 @@ export ZYXEL_FWVER=260
 
 ## Download config/logs
 
+Using the cmd subcommand:
+
 ```shell
 ./zyxel-tool.py --host $ZYXEL_HOST --user $ZYXEL_USER --password $ZYXEL_PASS --fwversion $ZYXEL_FWVER --verbose cmd --cmd 5901 --show-form --form-field type=8 --form-field upmethod=1 --submit-form --save-response type_8.out
 ```
