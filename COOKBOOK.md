@@ -7,6 +7,14 @@ export ZYXEL_PASS=1234
 export ZYXEL_FWVER=260
 ```
 
+## Check login works
+
+```shell
+./zyxel-tool.py --host $ZYXEL_HOST --user $ZYXEL_USER --password $ZYXEL_PASS --fwversion $ZYXEL_FWVER login
+```
+
+This simply outputs `ok` or `fail`.
+
 ## Download config/logs
 
 Using the cmd subcommand:
