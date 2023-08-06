@@ -6,6 +6,7 @@ from zyxel_remote_http import Zyxel
 import zyxel_remote_http
 from zyxel_remote_http.commands.cmd import Cmd
 from zyxel_remote_http.commands.login import Login
+from zyxel_remote_http.commands.menu import Menu
 from zyxel_remote_http.commands.ping import Ping
 
 def main(args):
@@ -39,7 +40,8 @@ if __name__ == "__main__":
     commands = {
         'cmd': Cmd(),
         'ping': Ping(),
-        'login': Login()
+        'login': Login(),
+        'menu': Menu(),
     }
 
     for name, command in commands.items():
