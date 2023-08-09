@@ -15,12 +15,12 @@ class Response():
         self._form = None
 
     def get_soup(self):
-        if self._bs == None:
+        if self._bs is None:
             self._bs = BeautifulSoup(self.http_response.text, 'html.parser')
         return self._bs
 
     def get_form(self):
-        if self._form == None:
+        if self._form is None:
             form_tag = self.get_soup().form
             if form_tag:
                 self._form = Form(form_tag)

@@ -53,7 +53,7 @@ class Zyxel():
         return self.request('POST', url, data=data)
     
     def follow_redirect_if_present(self, response=None):
-        if response == None:
+        if response is None:
             response = self.last_response
         redirect_url = response.search_for_location_replace()
         if self.verbose:

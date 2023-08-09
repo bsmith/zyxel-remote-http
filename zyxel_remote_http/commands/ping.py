@@ -21,13 +21,13 @@ class Ping():
 
         # handle form_fields
         form = response.get_form()
-        if args.ping_ip != None:
+        if args.ping_ip is not None:
             form.set_field('ip', args.ping_ip)
-        if args.ping_count != None:
+        if args.ping_count is not None:
             form.set_field('count', args.ping_count)
-        if args.ping_interval != None:
+        if args.ping_interval is not None:
             form.set_field('interval', args.ping_interval)
-        if args.ping_size != None:
+        if args.ping_size is not None:
             form.set_field('size', args.ping_size)
 
         # submit the form
