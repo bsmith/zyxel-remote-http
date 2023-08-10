@@ -3,7 +3,6 @@
 import argparse
 
 from zyxel_remote_http import Zyxel
-import zyxel_remote_http
 from zyxel_remote_http.commands.cmd import Cmd
 from zyxel_remote_http.commands.login import Login
 from zyxel_remote_http.commands.menu import Menu
@@ -34,7 +33,7 @@ if __name__ == "__main__":
                         required=True, help='Firmware version (260 or 270).')
     parser.add_argument('--verbose', '-V', dest='verbose', action="store_true",
                         help='Trace requests make to the device on stderr.')
-    
+
     subparsers = parser.add_subparsers(required=True)
 
     commands = {
@@ -48,5 +47,5 @@ if __name__ == "__main__":
         subparser = subparsers.add_parser(name)
         subparser.set_defaults(subcommand=command)
         command.add_options(subparser)
-    
+
     main(parser.parse_args())

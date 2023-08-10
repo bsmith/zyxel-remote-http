@@ -1,10 +1,10 @@
 import requests
 
 def make_session():
-    s = requests.Session()
+    session = requests.Session()
     # unfortunately, the ssl ciphers used by zyxel are very old and deprecated, thus plaintext HTTP
-    s.verify = False
-    return s
+    session.verify = False
+    return session
 
 def zyxelUrl(host):
-    return "http://{}/cgi-bin/dispatcher.cgi".format(host)
+    return f"http://{host}/cgi-bin/dispatcher.cgi"

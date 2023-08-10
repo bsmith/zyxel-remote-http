@@ -7,7 +7,7 @@ from zyxel_remote_http.zyxel import Zyxel
 class Cmd():
     def __init__(self):
         pass
-    
+
     def add_options(self, subparser: ArgumentParser):
         subparser.add_argument('--cmd', '-c', dest='cmd',
                             required=True, help='cmd')
@@ -23,7 +23,7 @@ class Cmd():
                             help='Submit the form on the returned page.')
         subparser.add_argument('--save-response', dest='save_response',
                                 help='File to save the final response to.')
-        
+
     def do_command(self, zyxel: Zyxel, args):
         # Request the given cmd
         response = zyxel.cmd(args.cmd)
@@ -37,7 +37,7 @@ class Cmd():
             dataset = response.extract_table()
             for row in dataset:
                 print(row)
-        
+
         # show the form
         if args.show_form:
             response.get_form().print_form()
@@ -63,6 +63,6 @@ class Cmd():
                 print("response form")
                 response_form.print_form()
             if args.save_response:
-                with open(args.save_response, "w") as file:
+                with open(args.save_response, "w", encoding="UTF-8") as file:
                     print(response.http_response.text, file=file)
-                print("wrote %s" % args.save_response)
+                print(f"wrote {args.save_response}")

@@ -1,12 +1,11 @@
 from argparse import ArgumentParser
-import sys
 from zyxel_remote_http.zyxel import Zyxel
 
 
 class Ping():
     def __init__(self):
         pass
-    
+
     def add_options(self, subparser: ArgumentParser):
         subparser.add_argument('--ip', dest='ping_ip', required=True,
                                 help='IP address to ping')

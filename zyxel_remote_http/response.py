@@ -8,7 +8,7 @@ class Response():
     http_response: requests.Response
     bs: BeautifulSoup
     form: bs4.Tag
-    
+
     def __init__(self, http_response):
         self.http_response = http_response
         self._bs = None
@@ -27,7 +27,7 @@ class Response():
             else:
                 return None
         return self._form
-    
+
     def search_for_location_replace(self):
         replace_match = re.search(r'window\.location\.replace\("([^"]+)"\)', self.http_response.text)
         if replace_match:

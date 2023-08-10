@@ -4,13 +4,13 @@ from bs4 import Tag
 class Form():
     html_form: Tag
     inputs: list
-    
+
     def __init__(self, html_form):
         self.html_form = html_form
         self.inputs = []
         self.set_fields = {}
         self._parse_form()
-    
+
     def _parse_form(self):
         self.method = self.html_form.attrs['method']
         self.form_action = self.html_form.attrs['action']
@@ -30,7 +30,7 @@ class Form():
                 if label_tag:
                     data['label'] = ' '.join(label_tag.stripped_strings)
             self.inputs.append(data)
-    
+
     def get_field(self, field_name):
         if field_name in self.set_fields:
             return self.set_fields[field_name]
@@ -38,14 +38,14 @@ class Form():
             if input['name'] == field_name:
                 return input['value']
         return None
-        
+
     def set_field(self, field_name, field_value):
         self.set_fields[field_name] = field_value
 
     def print_form(self):
         for input in self.inputs:
             print(input)
-    
+
     def get_form_url_and_data(self):
         data = {}
         types_to_skip = frozenset(['reset'])

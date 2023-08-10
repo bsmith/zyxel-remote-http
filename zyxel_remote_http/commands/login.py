@@ -8,7 +8,7 @@ class Login():
         # No options to set up
         pass
 
-    def do_command(self, zyxel: Zyxel, args):
+    def do_command(self, zyxel: Zyxel, _):
         response= zyxel.cmd(0)
 
         if response.http_response.status_code == 200:

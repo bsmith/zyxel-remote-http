@@ -1,7 +1,7 @@
 import math
-import requests
 from random import random
 from time import sleep, time
+import requests
 
 def performLogin(zyxel, url, username, password):
     login_data = {
