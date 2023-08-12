@@ -1,3 +1,13 @@
+# 5898
+# {'tag': <input id="XSSID" name="XSSID" type="hidden" value="3ao1Ot8FvITEhnfFkr3OhVZVDWyuxqg0"/>, 'name': 'XSSID', 'value': '3ao1Ot8FvITEhnfFkr3OhVZVDWyuxqg0', 'type': 'hidden'}
+# {'tag': <input checked="" id="srcFile_1" name="srcFile" onclick="srcFileSel(this.value)" type="radio" value="1"/>, 'name': 'srcFile', 'value': '1', 'type': 'radio', 'label': 'Running configuration'}
+# {'tag': <input id="srcFile_2" name="srcFile" onclick="srcFileSel(this.value)" type="radio" value="2"/>, 'name': 'srcFile', 'value': '2', 'type': 'radio', 'label': 'Startup configuration'}
+# {'tag': <input id="srcFile_3" name="srcFile" onclick="srcFileSel(this.value)" type="radio" value="3"/>, 'name': 'srcFile', 'value': '3', 'type': 'radio', 'label': 'Backup configuration'}
+# {'tag': <input checked="" id="dstFile_2" name="dstFile" onclick="dstFileSel(this.value)" type="radio" value="2"/>, 'name': 'dstFile', 'value': '2', 'type': 'radio', 'label': 'Startup configuration'}
+# {'tag': <input id="dstFile_3" name="dstFile" onclick="dstFileSel(this.value)" type="radio" value="3"/>, 'name': 'dstFile', 'value': '3', 'type': 'radio', 'label': 'Backup configuration'}
+# {'tag': <input name="cmd" type="hidden" value="5899"/>, 'name': 'cmd', 'value': '5899', 'type': 'hidden'}
+# {'tag': <input class="font-btn" name="sysSubmit" type="submit" value="Apply"/>, 'name': 'sysSubmit', 'value': 'Apply', 'type': 'submit'}
+# {'tag': <input class="font-btn" name="Cancel" onclick="window.location.reload();" type="reset" value="Cancel"/>, 'name': 'Cancel', 'value': 'Cancel', 'type': 'reset'}
 from zyxel_remote_http.zyxel import Zyxel
 
 
@@ -9,7 +19,7 @@ FLASH_LOG=6
 BUFFER_LOG=7
 TECH_SUPPORT=8
 
-class Backup():
+class Cfgmgmt():
     def add_options(self, subparser):
         subparser.add_argument('--save-running', dest='save_running',
                                help='File to write the running config (type=1) to')
@@ -30,7 +40,7 @@ class Backup():
 
         # handle form_fields
         response.get_form().set_field("type", backup_type)
-        response.get_form().set_field("upmethod", 1) # http
+        response.get_form().set_field("upmethod", 1)
 
         # submit the form
         (url, data) = response.get_form().get_form_url_and_data()

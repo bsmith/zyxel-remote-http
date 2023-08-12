@@ -24,18 +24,18 @@ class Zyxel():
     def login(self, user, password):
         performLogin(self, self.url_base, user, password, self.fwversion)
 
-    def request(self, method, url, data=None):
+    def request(self, method, url, /, data=None, files=None):
         url = urljoin(self.url_base, url)
         if self.verbose:
             redacted_data = dict(data if data else {})
             if 'password' in redacted_data:
                 redacted_data['password'] = 'REDACTED'
-            print(f'-> {method} {url} {redacted_data}', file=sys.stderr)
+            print(f'-> {method} {url} {redacted_data} {files}', file=sys.stderr)
         response = None
         if method == 'GET':
             response = self.session.get(url, params=data)
         elif method == 'POST':
-            response = self.session.post(url, data)
+            response = self.session.post(url, data=data, files=files)
         else:
             raise Exception(f"Can't do method {method}")
         if self.verbose:
@@ -45,11 +45,11 @@ class Zyxel():
         else:
             raise Exception(f"Failed to {method} {url}. Got response code {response.status_code}: {response.text}")
 
-    def get(self, url, params=None):
+    def get(self, url, /, params=None):
         return self.request('GET', url, data=params)
 
-    def post(self, url, data=None):
-        return self.request('POST', url, data=data)
+    def post(self, url, /, data=None, files=None):
+        return self.request('POST', url, data=data, files=files)
 
     def follow_redirect_if_present(self, response=None):
         if response is None:
