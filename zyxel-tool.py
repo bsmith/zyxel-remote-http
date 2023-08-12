@@ -3,6 +3,7 @@
 import argparse
 
 from zyxel_remote_http import Zyxel
+from zyxel_remote_http.commands.backup import Backup
 from zyxel_remote_http.commands.cmd import Cmd
 from zyxel_remote_http.commands.login import Login
 from zyxel_remote_http.commands.menu import Menu
@@ -41,6 +42,7 @@ if __name__ == "__main__":
         'ping': Ping(),
         'login': Login(),
         'menu': Menu(),
+        'backup': Backup(),
     }
 
     for name, command in commands.items():
