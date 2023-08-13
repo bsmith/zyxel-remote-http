@@ -8,6 +8,7 @@ from zyxel_remote_http.commands.cmd import Cmd
 from zyxel_remote_http.commands.login import Login
 from zyxel_remote_http.commands.menu import Menu
 from zyxel_remote_http.commands.ping import Ping
+from zyxel_remote_http.commands.reboot import Reboot
 
 def main(args):
     # Connect to the zyxel and log in
@@ -43,6 +44,7 @@ if __name__ == "__main__":
         'login': Login(),
         'menu': Menu(),
         'backup': Backup(),
+        'reboot': Reboot(),
     }
 
     for name, command in commands.items():
