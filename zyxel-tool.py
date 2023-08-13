@@ -10,6 +10,7 @@ from zyxel_remote_http.commands.login import Login
 from zyxel_remote_http.commands.menu import Menu
 from zyxel_remote_http.commands.ping import Ping
 from zyxel_remote_http.commands.restore import Restore
+from zyxel_remote_http.commands.reboot import Reboot
 
 def main(args):
     # Connect to the zyxel and log in
@@ -21,7 +22,7 @@ def main(args):
     if hasattr(args.subcommand, 'do_command'):
         args.subcommand.do_command(zyxel, args)
     else:
-        raise Exception('cannot execute command')
+        raise ValueError('cannot execute command: ' + str(args.subcommand))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -47,6 +48,7 @@ if __name__ == "__main__":
         'backup': Backup(),
         'restore': Restore(),
         'cfgmgmt': Cfgmgmt(),
+        'reboot': Reboot(),
     }
 
     for name, command in commands.items():

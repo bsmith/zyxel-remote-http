@@ -48,3 +48,10 @@ Using the cmd subcommand:
 ./zyxel-tool.py --host $ZYXEL_HOST --user $ZYXEL_USER --password $ZYXEL_PASS --fwversion $ZYXEL_FWVER cmd --cmd 530 --form-field ip=172.16.X.Z --show-form --submit-form --verbose
 ```
 
+## MAC Table
+
+Using the cmd subcommand:
+
+```shell
+./zyxel-tool.py --host $ZYXEL_HOST --user $ZYXEL_USER --password $ZYXEL_PASS --fwversion $ZYXEL_FWVER cmd --cmd 2049 --extract-table
+```
