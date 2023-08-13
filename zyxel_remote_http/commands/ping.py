@@ -7,8 +7,7 @@ class Ping():
         pass
 
     def add_options(self, subparser: ArgumentParser):
-        subparser.add_argument('--ip', dest='ping_ip', required=True,
-                                help='IP address to ping')
+        subparser.add_argument(metavar='IP', dest='ping_ip', help='IP address to ping')
         subparser.add_argument('--count', dest='ping_count')
         subparser.add_argument('--interval', dest='ping_interval')
         subparser.add_argument('--size', dest='ping_size')

@@ -1,4 +1,5 @@
 import sys
+from time import time
 from urllib.parse import urljoin
 from .response import Response
 from .common import make_session, zyxelUrl
@@ -37,13 +38,13 @@ class Zyxel():
         elif method == 'POST':
             response = self.session.post(url, data)
         else:
-            raise Exception(f"Can't do method {method}")
+            raise ValueError(f"Can't do method {method}")
         if self.verbose:
             print(f'<- status {response.status_code}', file=sys.stderr)
         if response.ok:
             return self._set_last_response(Response(response))
         else:
-            raise Exception(f"Failed to {method} {url}. Got response code {response.status_code}: {response.text}")
+            raise RuntimeError(f"Failed to {method} {url}. Got response code {response.status_code}: {response.text}")
 
     def get(self, url, params=None):
         return self.request('GET', url, data=params)
@@ -62,4 +63,4 @@ class Zyxel():
         return response
 
     def cmd(self, cmd):
-        return self.get(self.url_base, params={"cmd": cmd})
+        return self.get(self.url_base, params={"cmd": cmd, "dummy": int(time() * 1000.0)})

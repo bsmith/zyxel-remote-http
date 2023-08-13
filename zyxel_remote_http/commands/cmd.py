@@ -9,8 +9,7 @@ class Cmd():
         pass
 
     def add_options(self, subparser: ArgumentParser):
-        subparser.add_argument('--cmd', '-c', dest='cmd',
-                            required=True, help='cmd')
+        subparser.add_argument('cmd', help='cmd')
         subparser.add_argument('--dump-html', dest='dump_html', action='store_true',
                                 help='Dump the HTML of the page.')
         subparser.add_argument('--extract-table', '--extract-tables', dest='extract_table', action='store_true',
